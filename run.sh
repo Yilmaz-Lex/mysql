@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PASSWORD=${PASSWORD:-""}
+
 service mysql start
 
 RET=1
@@ -10,8 +12,13 @@ while [[ RET -ne 0 ]]; do
     RET=$?
 done
 
+if [[ $PASSWORD == "" ]]; then
+  echo "No $PASSWORD set"
+  exit 1
+fi
+
 echo "=> Creating user ..."
-mysql -uroot -e "CREATE USER 'admin'@'%' IDENTIFIED BY '${PASSWORD}'"
+mysql -uroot -e "CREATE USER 'admin'@'%' IDENTIFIED BY '$PASSWORD'"
 mysql -uroot -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION"
 
 mysqladmin shutdown
